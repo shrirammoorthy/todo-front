@@ -22,18 +22,18 @@ class ListItem extends Component {
   }
   handleResponse(response) {
     const data = response.data;
-    const count = this.handleCount(data); 
+    const count = this.handleCount(data);
     console.log(count)
-    this.setState({...count });
+    this.setState({ ...count });
   }
-  handleCount(data){
+  handleCount(data) {
     let completed = 0;
     let pending = 0;
     const set = data.forEach(object => {
       if (object.status === 1) completed++;
       else pending++;
     })
-    return{ items: data, completed, pending }
+    return { items: data, completed, pending }
   }
   handleChangeChk(event) {
     const id = event.target.dataset.id;
@@ -42,7 +42,7 @@ class ListItem extends Component {
       if (object.id == id) object.status = object.status === 0 ? 1 : 0
     })
     const count = this.handleCount(data);
-    this.setState({...count });
+    this.setState({ ...count });
   }
   render() {
     if (this.state.items == null) {
