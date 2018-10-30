@@ -8,7 +8,6 @@ class ListItem extends Component {
     super(props);
     this.handleChangeChk = this.handleChangeChk.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
-    this.handleCount = this.handleCount.bind(this);
     this.state = {
       items: null,
       completed: null,
@@ -24,23 +23,26 @@ class ListItem extends Component {
   handleResponse(response) {
     const data = response.data;
     const count = this.handleCount(data); 
+    console.log(count)
+    this.setState({...count });
   }
   handleCount(data){
     let completed = 0;
     let pending = 0;
     const set = data.forEach(object => {
-      if (object.status == 1) completed++;
+      if (object.status === 1) completed++;
       else pending++;
     })
-    this.setState({ items: data, completed, pending });
+    return{ items: data, completed, pending }
   }
   handleChangeChk(event) {
     const id = event.target.dataset.id;
     const data = [...this.state.items];
     const item = data.filter(object => {
-      if (object.id == id) object.status = object.status == 0 ? 1 : 0
+      if (object.id == id) object.status = object.status === 0 ? 1 : 0
     })
-    this.handleCount(data)
+    const count = this.handleCount(data);
+    this.setState({...count });
   }
   render() {
     if (this.state.items == null) {
