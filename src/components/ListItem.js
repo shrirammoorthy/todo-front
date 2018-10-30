@@ -8,26 +8,12 @@ class ListItem extends Component {
     super(props);
     this.handleChangeChk = this.handleChangeChk.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
+    this.handleCount = this.handleCount.bind(this);
     this.state = {
       items: null,
       completed: null,
       pending: null
     }
-  }
-  handleResponse(response) {
-    const data = response.data;
-    let completed = 0;
-    let pending = 0;
-    data.forEach(function (object, key) {
-      if (object.status == true) {
-        completed++;
-      }
-      else {
-        pending++;
-      }
-    })
-    this.setState({ items: data, completed: completed, pending: pending });
-
   }
   componentDidMount() {
     axios.get(config.apiUrl + 'items')
@@ -35,19 +21,27 @@ class ListItem extends Component {
         console.log(error);
       })
   }
-  handleChangeChk(id, event) {
-    event.preventDefault();
-    const data = [...this.state.items];
-    const item = data.filter(function(item){
-      return item.id === id;
-    })
-
-    //item[0].status = !item[0].status;
-    console.log(item);
-    this.setState({ items: data });
-
+  handleResponse(response) {
+    const data = response.data;
+    const count = this.handleCount(data); 
   }
-
+  handleCount(data){
+    let completed = 0;
+    let pending = 0;
+    const set = data.forEach(object => {
+      if (object.status == 1) completed++;
+      else pending++;
+    })
+    this.setState({ items: data, completed, pending });
+  }
+  handleChangeChk(event) {
+    const id = event.target.dataset.id;
+    const data = [...this.state.items];
+    const item = data.filter(object => {
+      if (object.id == id) object.status = object.status == 0 ? 1 : 0
+    })
+    this.handleCount(data)
+  }
   render() {
     if (this.state.items == null) {
       return null;
@@ -57,7 +51,6 @@ class ListItem extends Component {
         <div className="col-lg-offset-3 col-lg-6">
           <div className="panel panel-default">
             <div className="panel-heading">
-
               <h3 className="panel-success">Activity List</h3>
               <Link to="add-task" className="btn btn-default">Add</Link>
             </div>
@@ -65,12 +58,11 @@ class ListItem extends Component {
             <div className="panel-body" id="items">
               <ul className="list-group">
                 <li className="list-group-item ourItem">
-                  {/* {this.tabRow()} */}
                   {this.state.items.map((object, i) => (
                     <div key={i}>
                       <p>
-                        <input type="checkbox" className="form-control"
-                         defaultChecked={!object.status} onChange={(e) => this.handleChangeChk(object.id, e)} />
+                        <input type="checkbox" className="form-control" data-id={object.id}
+                          defaultChecked={!!object.status} onChange={this.handleChangeChk} />
                         {object.item}<br />
                       </p>
                     </div>
