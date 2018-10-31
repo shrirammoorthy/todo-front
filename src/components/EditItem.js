@@ -30,7 +30,6 @@ class EditItem extends Component {
     })
   }
   handleChange2(e){
-    console.log(e.target)
     this.setState({
       status:  !this.state.status
     })

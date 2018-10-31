@@ -23,7 +23,6 @@ class ListItem extends Component {
   handleResponse(response) {
     const data = response.data;
     const count = this.handleCount(data);
-    console.log(count)
     this.setState({ ...count });
   }
   handleCount(data) {
@@ -35,13 +34,20 @@ class ListItem extends Component {
     })
     return { items: data, completed, pending }
   }
-  handleChangeChk(event) {
-    const id = event.target.dataset.id;
+  handleChangeChk(e) {
+    const products = {
+      text: e.target.value,
+      status: e.target.checked
+    }
+    const id = e.target.dataset.id;
     const data = [...this.state.items];
     const item = data.filter(object => {
       if (object.id == id) object.status = object.status === 0 ? 1 : 0
     })
     const count = this.handleCount(data);
+    let uri = config.apiUrl+'items/'+id;
+    axios.put(uri, products).then((response) => {
+    })
     this.setState({ ...count });
   }
   render() {
@@ -64,7 +70,7 @@ class ListItem extends Component {
                     <div key={i}>
                       <p>
                         <input type="checkbox" className="form-control" data-id={object.id}
-                          defaultChecked={!!object.status} onChange={this.handleChangeChk} />
+                          defaultChecked={!!object.status} onChange={this.handleChangeChk} value = {object.item} />
                         {object.item}<br />
                       </p>
                     </div>

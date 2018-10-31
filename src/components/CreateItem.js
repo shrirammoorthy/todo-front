@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import createHistory from "history/createBrowserHistory";
 import config from '../config';
 
-const history = createHistory();
 class CreateItem extends Component {
   constructor(props) {
     super(props);
