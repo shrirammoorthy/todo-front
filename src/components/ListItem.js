@@ -45,7 +45,7 @@ class ListItem extends Component {
       if (object.id == id) object.status = object.status === 0 ? 1 : 0
     })
     const count = this.handleCount(data);
-    let uri = config.apiUrl+'items/'+id;
+    let uri = config.apiUrl + 'items/' + id;
     axios.put(uri, products).then((response) => {
     })
     this.setState({ ...count });
@@ -70,7 +70,7 @@ class ListItem extends Component {
                     <div key={i}>
                       <p>
                         <input type="checkbox" className="form-control" data-id={object.id}
-                          defaultChecked={!!object.status} onChange={this.handleChangeChk} value = {object.item} />
+                          defaultChecked={!!object.status} onChange={this.handleChangeChk} value={object.item} />
                         {object.item}<br />
                       </p>
                     </div>
