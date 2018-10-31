@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
 
@@ -8,10 +8,17 @@ class ListItem extends Component {
     super(props);
     this.handleChangeChk = this.handleChangeChk.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
+    this.handleChange1 = this.handleChange1.bind(this);
+    this.handleChange2 = this.handleChange2.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.state = {
       items: null,
       completed: null,
-      pending: null
+      pending: null,
+      text: '',
+      status: ''
     }
   }
   componentDidMount() {
@@ -19,6 +26,25 @@ class ListItem extends Component {
       .then(this.handleResponse).catch(function (error) {
         console.log(error);
       })
+  }
+  handleChange1(e) {
+    this.setState({
+      text: e.target.value
+    })
+  }
+  handleChange2(e) {
+    this.setState({
+      status: !this.state.status
+    })
+  }
+  handleClick(e) {
+    const id = e.target.dataset.id;
+    const data = [...this.state.items];
+    let uri = config.apiUrl + `/items/` + id;
+    axios.delete(uri);
+    const item = data.filter(object => object.id != id)
+    const count = this.handleCount(item);
+    this.setState({ ...count });
   }
   handleResponse(response) {
     const data = response.data;
@@ -50,6 +76,23 @@ class ListItem extends Component {
     })
     this.setState({ ...count });
   }
+  handleUpdate(e) {
+    const id = e.target.dataset.id;
+    this.props.history.push('/edit-item/' + id);
+  }
+  handleSubmit(event) {
+    const items = {
+      text: this.state.text,
+      status: this.state.status
+    }
+    let uri = config.apiUrl + 'items';
+    axios.post(uri, items);
+    axios.get(uri)
+      .then(this.handleResponse).catch(function (error) {
+        console.log(error);
+      });
+    this.setState({ text: '', status: '' });
+  }
   render() {
     if (this.state.items == null) {
       return null;
@@ -60,7 +103,9 @@ class ListItem extends Component {
           <div className="panel panel-default">
             <div className="panel-heading">
               <h3 className="panel-success">Activity List</h3>
-              <Link to="add-task" className="btn btn-default">Add</Link>
+              <p><input type="text" id="addItem" placeholder="Please enter to do tasks" className="form-control" onChange={this.handleChange1} value={this.state.text} /></p>
+              <p>Please check the list if tasks completed.<input type="checkbox" id="setItem" checked={this.state.status} className="form-control" onChange={this.handleChange2} /></p>
+              <input type="submit" className="btn btn-info" id="add" value="Add" onClick={this.handleSubmit} />
             </div>
 
             <div className="panel-body" id="items">
@@ -73,6 +118,9 @@ class ListItem extends Component {
                           defaultChecked={!!object.status} onChange={this.handleChangeChk} value={object.item} />
                         {object.item}<br />
                       </p>
+                      <p>  <Link to={{ pathname: "/edit-item", state: { id: object.id } }} className="btn btn-success">Edit</Link>
+                        {/* <button data-id={object.id} className="btn btn-edit" id="edit" onClick={this.handleUpdate}>Edit</button> */}
+                        <button data-id={object.id} className="btn btn-Danger" id="delete" onClick={this.handleClick}>Delete</button></p>
                     </div>
                   ))}
                 </li>
