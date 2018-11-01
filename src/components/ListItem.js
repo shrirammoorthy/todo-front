@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
 
@@ -85,13 +85,25 @@ class ListItem extends Component {
       text: this.state.text,
       status: this.state.status
     }
+    const vals = {
+      id: '',
+      item: this.state.text,
+      status: this.state.status,
+      created_at: '',
+      updated_at: ''
+    }
     let uri = config.apiUrl + 'items';
     axios.post(uri, items);
-    axios.get(uri)
-      .then(this.handleResponse).catch(function (error) {
-        console.log(error);
-      });
-    this.setState({ text: '', status: '' });
+    // axios.get(uri)
+    //   .then(this.handleResponse).catch(function (error) {
+    //     console.log(error);
+    //   });
+    console.log(...this.state.items)
+    this.setState({ items: [...this.state.items, vals] })
+    console.log(...this.state.items)
+    const data = [ ...this.state.items ];
+    const count = this.handleCount(data);
+    this.setState({ ...count, text: '', status: '' });
   }
   render() {
     if (this.state.items == null) {

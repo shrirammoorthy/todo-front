@@ -34,7 +34,6 @@ class EditItem extends Component {
   }
   handleSubmit(event) {
     event.preventDefault();
-    const {id} = this.props.location.state
     const products = {
       text: this.state.text,
       status: this.state.status
